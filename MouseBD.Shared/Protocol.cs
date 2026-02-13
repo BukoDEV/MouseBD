@@ -5,16 +5,18 @@ namespace MouseBD.Shared;
 /// </summary>
 public enum PacketType : byte
 {
-    Move       = 0x01,
-    LeftDown   = 0x02,
-    LeftUp     = 0x03,
-    RightDown  = 0x04,
-    RightUp    = 0x05,
-    Scroll     = 0x06,
-    Ping       = 0x07,
-    Pong       = 0x08,
-    MiddleDown = 0x09,
-    MiddleUp   = 0x0A,
+    Move        = 0x01,
+    LeftDown    = 0x02,
+    LeftUp      = 0x03,
+    RightDown   = 0x04,
+    RightUp     = 0x05,
+    Scroll      = 0x06,
+    Ping        = 0x07,
+    Pong        = 0x08,
+    MiddleDown  = 0x09,
+    MiddleUp    = 0x0A,
+    Discover    = 0x0B,  // broadcast: phone looking for server
+    DiscoverAck = 0x0C,  // server response: [type][port_lo][port_hi]
 }
 
 /// <summary>
@@ -51,6 +53,20 @@ public static class Protocol
     public static byte[] BuildPongPacket()
         => new[] { (byte)PacketType.Pong };
 
+    public static byte[] BuildDiscoverPacket()
+        => new[] { (byte)PacketType.Discover };
+
+    public static byte[] BuildDiscoverAckPacket(int port)
+        => new[] { (byte)PacketType.DiscoverAck, (byte)(port & 0xFF), (byte)((port >> 8) & 0xFF) };
+
+    /// <summary>Write a Move packet into a pre-allocated 9-byte span (zero allocation).</summary>
+    public static void WriteMovePacket(Span<byte> buf, float dx, float dy)
+        => WriteXYPacket(buf, PacketType.Move, dx, dy);
+
+    /// <summary>Write a Scroll packet into a pre-allocated 9-byte span (zero allocation).</summary>
+    public static void WriteScrollPacket(Span<byte> buf, float dx, float dy)
+        => WriteXYPacket(buf, PacketType.Scroll, dx, dy);
+
     // --- Deserialization ---
 
     public static bool TryParse(ReadOnlySpan<byte> data, out PacketType type, out float x, out float y)
@@ -82,5 +98,12 @@ public static class Protocol
         BitConverter.TryWriteBytes(buf.AsSpan(1), x);
         BitConverter.TryWriteBytes(buf.AsSpan(5), y);
         return buf;
+    }
+
+    private static void WriteXYPacket(Span<byte> buf, PacketType type, float x, float y)
+    {
+        buf[0] = (byte)type;
+        BitConverter.TryWriteBytes(buf[1..5], x);
+        BitConverter.TryWriteBytes(buf[5..9], y);
     }
 }

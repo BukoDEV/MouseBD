@@ -56,7 +56,7 @@ public partial class SettingsPage : ContentPage
         UpdateConnStatus(ok);
     }
 
-    private async void OnUsbClicked(object? sender, EventArgs e)
+    private async void OnDiscoverClicked(object? sender, EventArgs e)
     {
         if (_service.IsConnected)
         {
@@ -65,36 +65,38 @@ public partial class SettingsPage : ContentPage
             return;
         }
 
-        // USB via ADB reverse: phone connects to its own loopback,
-        // which ADB forwards to the PC's port.
-        IpEntry.Text         = "127.0.0.1";
-        _settings.ServerIp   = "127.0.0.1";
+        DiscoverBtn.IsEnabled    = false;
+        ConnectBtn.IsEnabled     = false;
+        ConnStatusLabel.Text     = "Szukam serwera...";
+        ConnStatusLabel.TextColor = Color.FromArgb("#f0a500");
+
+        string? ip = await _service.DiscoverAsync(timeoutMs: 2500);
+
+        if (ip is null)
+        {
+            DiscoverBtn.IsEnabled    = true;
+            ConnectBtn.IsEnabled     = true;
+            ConnStatusLabel.Text     = "Nie znaleziono serwera. Sprawdz czy serwer dziala i jestes w tej samej sieci lub masz wlaczone tethering USB.";
+            ConnStatusLabel.TextColor = Color.FromArgb("#f85149");
+            return;
+        }
+
+        IpEntry.Text         = ip;
+        _settings.ServerIp   = ip;
 
         if (!int.TryParse(PortEntry.Text, out int port) || port is < 1 or > 65535)
             port = Protocol.DefaultPort;
         _settings.ServerPort = port;
         _settings.Save();
 
-        UsbBtn.IsEnabled     = false;
-        ConnectBtn.IsEnabled = false;
-        ConnStatusLabel.Text = "";
-        ConnectBtn.Text      = "Łączenie USB...";
+        ConnectBtn.Text = "Laczenie...";
 
         bool ok = await _service.ConnectAsync(_settings);
 
-        UsbBtn.IsEnabled     = true;
-        ConnectBtn.IsEnabled = true;
-        ConnectBtn.Text      = ok ? "Rozłącz" : "Połącz (WiFi)";
-
-        if (!ok)
-        {
-            ConnStatusLabel.Text      = "USB: uruchom 'Wlącz tryb USB' w serwerze na PC";
-            ConnStatusLabel.TextColor = Color.FromArgb("#f85149");
-        }
-        else
-        {
-            UpdateConnStatus(true);
-        }
+        DiscoverBtn.IsEnabled = true;
+        ConnectBtn.IsEnabled  = true;
+        ConnectBtn.Text       = ok ? "Rozlacz" : "Polacz (WiFi)";
+        UpdateConnStatus(ok);
     }
 
     private void OnConnectionChanged(bool connected)

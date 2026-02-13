@@ -70,19 +70,47 @@ public class MultiTouchSurfaceHandler
                 case MotionEventActions.Move:
                     if (_scrollMode && e.PointerCount >= 2)
                     {
+                        // Accumulate all batched historical midpoints to avoid missed movement
+                        float totalScrollDx = 0f, totalScrollDy = 0f;
+                        for (int h = 0; h < e.HistorySize; h++)
+                        {
+                            float hmx = (e.GetHistoricalX(0, h) + e.GetHistoricalX(1, h)) / 2f;
+                            float hmy = (e.GetHistoricalY(0, h) + e.GetHistoricalY(1, h)) / 2f;
+                            totalScrollDx += hmx - _lastMidX;
+                            totalScrollDy += hmy - _lastMidY;
+                            _lastMidX = hmx;
+                            _lastMidY = hmy;
+                        }
                         float midX = (e.GetX(0) + e.GetX(1)) / 2f;
                         float midY = (e.GetY(0) + e.GetY(1)) / 2f;
-                        _surface.RaiseMultiTouchScrolled(midX - _lastMidX, midY - _lastMidY);
+                        totalScrollDx += midX - _lastMidX;
+                        totalScrollDy += midY - _lastMidY;
                         _lastMidX = midX;
                         _lastMidY = midY;
+                        if (totalScrollDx != 0f || totalScrollDy != 0f)
+                            _surface.RaiseMultiTouchScrolled(totalScrollDx, totalScrollDy);
                     }
                     else if (!_scrollMode && e.PointerCount == 1)
                     {
+                        // Accumulate all batched historical positions to avoid missed movement
+                        float totalDx = 0f, totalDy = 0f;
+                        for (int h = 0; h < e.HistorySize; h++)
+                        {
+                            float hx = e.GetHistoricalX(0, h);
+                            float hy = e.GetHistoricalY(0, h);
+                            totalDx += hx - _lastX;
+                            totalDy += hy - _lastY;
+                            _lastX = hx;
+                            _lastY = hy;
+                        }
                         float x = e.GetX(0);
                         float y = e.GetY(0);
-                        _surface.RaiseSingleTouchMoved(x - _lastX, y - _lastY);
+                        totalDx += x - _lastX;
+                        totalDy += y - _lastY;
                         _lastX = x;
                         _lastY = y;
+                        if (totalDx != 0f || totalDy != 0f)
+                            _surface.RaiseSingleTouchMoved(totalDx, totalDy);
                     }
                     break;
 

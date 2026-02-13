@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -31,10 +30,9 @@ public sealed class TrayApp : ApplicationContext
         _menu.Items.Add(_ipItem);
         _menu.Items.Add(_statusItem);
         _menu.Items.Add(new ToolStripSeparator());
-        _menu.Items.Add("Pokaż IP...",       null, (_, _) => ShowStatus());
-        _menu.Items.Add("Włącz tryb USB",    null, (_, _) => EnableUsbMode());
+        _menu.Items.Add("Pokaz IP...",  null, (_, _) => ShowStatus());
         _menu.Items.Add(new ToolStripSeparator());
-        _menu.Items.Add("Zamknij",           null, (_, _) => ExitThread());
+        _menu.Items.Add("Zamknij",      null, (_, _) => ExitThread());
 
         _tray = new NotifyIcon
         {
@@ -66,109 +64,16 @@ public sealed class TrayApp : ApplicationContext
         MessageBox.Show(
             $"Adresy IP:\n{ipLines}\n\n" +
             $"Port: {MouseBD.Shared.Protocol.DefaultPort}\n\n" +
-            "Podaj odpowiedni adres IP w aplikacji na telefonie.\n" +
-            "Jeśli jest kilka adresów, wybierz ten z sieci WiFi (np. 192.168.x.x).\n\n" +
-            "Polaczenie USB: kliknij 'Wlącz tryb USB' w menu,\n" +
-            "a w aplikacji wpisz 127.0.0.1.",
-            "MouseBD Server – Informacje o połączeniu",
+            "Polaczenie WiFi:\n" +
+            "  Podaj adres IP w aplikacji lub uzyj przycisku 'Wykryj'.\n" +
+            "  Jesli jest kilka adresow, wybierz ten z WiFi (np. 192.168.x.x).\n\n" +
+            "Polaczenie USB (bez ADB):\n" +
+            "  1. Podlacz telefon kablem USB do komputera.\n" +
+            "  2. Wlacz 'Udostepnianie USB' (tethering) w ustawieniach Androida.\n" +
+            "  3. W aplikacji nacisnij 'Wykryj' – serwer zostanie znaleziony automatycznie.",
+            "MouseBD Server – Informacje o polaczeniu",
             MessageBoxButtons.OK,
             MessageBoxIcon.Information);
-    }
-
-    // ── USB / ADB ──────────────────────────────────────────────────────────
-
-    private void EnableUsbMode()
-    {
-        var adb = FindAdb();
-        if (adb is null)
-        {
-            MessageBox.Show(
-                "Nie znaleziono adb.exe.\n\n" +
-                "Zainstaluj Android SDK Platform Tools i upewnij się,\n" +
-                "że adb.exe jest dostępne w zmiennej PATH.\n\n" +
-                "Możesz też pobrać samo narzędzie z:\n" +
-                "https://developer.android.com/studio/releases/platform-tools",
-                "Tryb USB – brak ADB",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning);
-            return;
-        }
-
-        int port = MouseBD.Shared.Protocol.DefaultPort;
-        try
-        {
-            var psi = new ProcessStartInfo(adb, $"reverse tcp:{port} tcp:{port}")
-            {
-                RedirectStandardOutput = true,
-                RedirectStandardError  = true,
-                UseShellExecute        = false,
-                CreateNoWindow         = true,
-            };
-
-            using var proc = Process.Start(psi)!;
-            proc.WaitForExit(5000);
-            string output = proc.StandardOutput.ReadToEnd().Trim();
-            string error  = proc.StandardError.ReadToEnd().Trim();
-
-            if (proc.ExitCode == 0)
-            {
-                _tray.ShowBalloonTip(4000, "MouseBD – Tryb USB aktywny",
-                    $"Połączenie USB gotowe.\nW aplikacji wpisz: 127.0.0.1", ToolTipIcon.Info);
-                UpdateStatus("Tryb USB aktywny");
-            }
-            else
-            {
-                string detail = string.IsNullOrEmpty(error) ? output : error;
-                MessageBox.Show(
-                    $"Błąd ADB ({proc.ExitCode}):\n{detail}\n\n" +
-                    "Upewnij się, że:\n" +
-                    "• Telefon jest podłączony kablem USB\n" +
-                    "• Debugowanie USB jest włączone w opcjach deweloperskich\n" +
-                    "• Zaakceptowałeś monit o debugowanie USB na telefonie",
-                    "Tryb USB – błąd ADB",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            }
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Nie można uruchomić adb:\n{ex.Message}",
-                "Tryb USB – błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-    }
-
-    private static string? FindAdb()
-    {
-        // 1. Check PATH
-        foreach (var dir in (Environment.GetEnvironmentVariable("PATH") ?? "").Split(Path.PathSeparator))
-        {
-            var candidate = Path.Combine(dir, "adb.exe");
-            if (File.Exists(candidate)) return candidate;
-        }
-
-        // 2. Common Android SDK locations
-        var sdkRoots = new[]
-        {
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            @"C:\",
-        };
-
-        var sdkPaths = new[]
-        {
-            @"Android\sdk\platform-tools\adb.exe",
-            @"Android\Sdk\platform-tools\adb.exe",
-            @"Android\platform-tools\adb.exe",
-        };
-
-        foreach (var root in sdkRoots)
-        foreach (var rel  in sdkPaths)
-        {
-            var full = Path.Combine(root, rel);
-            if (File.Exists(full)) return full;
-        }
-
-        return null;
     }
 
     // ── IP Helpers ─────────────────────────────────────────────────────────

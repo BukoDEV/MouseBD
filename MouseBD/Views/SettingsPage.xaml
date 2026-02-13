@@ -59,15 +59,14 @@
                             CornerRadius="8"
                             Clicked="OnConnectClicked"/>
                         <Button
-                            x:Name="UsbBtn"
+                            x:Name="DiscoverBtn"
                             Grid.Column="1"
-                            Text="USB"
+                            Text="Wykryj"
                             BackgroundColor="#1f6feb"
                             TextColor="White"
                             CornerRadius="8"
-                            WidthRequest="72"
-                            Clicked="OnUsbClicked"
-                            ToolTipProperties.Text="Połącz przez kabel USB (wymaga ADB reverse na PC)"/>
+                            WidthRequest="80"
+                            Clicked="OnDiscoverClicked"/>
                     </Grid>
 
                     <Label

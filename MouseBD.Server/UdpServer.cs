@@ -99,9 +99,13 @@ public sealed class UdpServer : IDisposable
             case PacketType.MiddleUp:   MouseController.MiddleUp();   break;
 
             case PacketType.Ping:
-                // Send pong back to client
                 var pong = Protocol.BuildPongPacket();
                 _udp.Send(pong, pong.Length, remoteEp);
+                break;
+
+            case PacketType.Discover:
+                var ack = Protocol.BuildDiscoverAckPacket(_port);
+                _udp.Send(ack, ack.Length, remoteEp);
                 break;
         }
     }
