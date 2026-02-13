@@ -68,7 +68,7 @@ public sealed class TrayApp : ApplicationContext
             $"Port: {MouseBD.Shared.Protocol.DefaultPort}\n\n" +
             "Podaj odpowiedni adres IP w aplikacji na telefonie.\n" +
             "Jeśli jest kilka adresów, wybierz ten z sieci WiFi (np. 192.168.x.x).\n\n" +
-            "Połączenie USB: kliknij „Włącz tryb USB" w menu,\n" +
+            "Polaczenie USB: kliknij 'Wlącz tryb USB' w menu,\n" +
             "a w aplikacji wpisz 127.0.0.1.",
             "MouseBD Server – Informacje o połączeniu",
             MessageBoxButtons.OK,

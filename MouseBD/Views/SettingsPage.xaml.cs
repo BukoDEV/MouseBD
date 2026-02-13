@@ -88,7 +88,7 @@ public partial class SettingsPage : ContentPage
 
         if (!ok)
         {
-            ConnStatusLabel.Text      = "USB: uruchom „Włącz tryb USB" w serwerze na PC";
+            ConnStatusLabel.Text      = "USB: uruchom 'Wlącz tryb USB' w serwerze na PC";
             ConnStatusLabel.TextColor = Color.FromArgb("#f85149");
         }
         else
