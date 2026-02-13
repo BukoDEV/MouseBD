@@ -25,7 +25,8 @@ public class MainActivity : MauiAppCompatActivity
         // Keep screen on while app is running
         Window?.AddFlags(WindowManagerFlags.KeepScreenOn);
 
-        // Full screen immersive mode
-        Window?.SetDecorFitsSystemWindows(false);
+        // Full screen immersive mode — SetDecorFitsSystemWindows requires API 30+
+        if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
+            Window?.SetDecorFitsSystemWindows(false);
     }
 }
