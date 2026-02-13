@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="MouseBD.Views.TouchpadPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="#0d1117">
+
+    <Grid RowDefinitions="Auto,*,Auto,80">
+
+        <!-- Status bar -->
+        <Grid Grid.Row="0" BackgroundColor="#161b22" Padding="16,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Label
+                x:Name="StatusLabel"
+                Grid.Column="0"
+                Text="Rozłączono"
+                TextColor="#8b949e"
+                FontSize="14"
+                VerticalOptions="Center"/>
+
+            <Ellipse
+                x:Name="StatusDot"
+                Grid.Column="1"
+                WidthRequest="10"
+                HeightRequest="10"
+                Fill="#f85149"
+                VerticalOptions="Center"
+                Margin="0,0,12,0"/>
+
+            <ImageButton
+                Grid.Column="2"
+                x:Name="SettingsBtn"
+                Source="settings.png"
+                WidthRequest="28"
+                HeightRequest="28"
+                BackgroundColor="Transparent"
+                Clicked="OnSettingsClicked"/>
+        </Grid>
+
+        <!-- Main touchpad area -->
+        <Border
+            Grid.Row="1"
+            Margin="8,8,8,4"
+            BackgroundColor="#161b22"
+            StrokeShape="RoundRectangle 16"
+            Stroke="#30363d"
+            StrokeThickness="1">
+
+            <Grid>
+                <!-- Touchpad gesture surface -->
+                <BoxView
+                    x:Name="TouchSurface"
+                    BackgroundColor="Transparent"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill"/>
+
+                <!-- Hint text when disconnected -->
+                <VerticalStackLayout
+                    x:Name="HintPanel"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Spacing="8">
+                    <Label
+                        Text="🖱"
+                        FontSize="48"
+                        HorizontalOptions="Center"/>
+                    <Label
+                        Text="Połącz z serwerem"
+                        TextColor="#8b949e"
+                        FontSize="16"
+                        HorizontalOptions="Center"/>
+                    <Label
+                        Text="Naciśnij  ⚙  aby skonfigurować"
+                        TextColor="#484f58"
+                        FontSize="13"
+                        HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+
+                <!-- Active ripple indicator -->
+                <Ellipse
+                    x:Name="RippleCircle"
+                    WidthRequest="60"
+                    HeightRequest="60"
+                    Fill="#4ecca320"
+                    Stroke="#4ecca3"
+                    StrokeThickness="1"
+                    IsVisible="False"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start"/>
+
+                <!-- Finger count badge -->
+                <Border
+                    x:Name="FingerBadge"
+                    IsVisible="False"
+                    BackgroundColor="#4ecca3"
+                    StrokeShape="RoundRectangle 20"
+                    Padding="8,4"
+                    HorizontalOptions="End"
+                    VerticalOptions="Start"
+                    Margin="0,8,8,0">
+                    <Label
+                        x:Name="FingerLabel"
+                        Text="1"
+                        TextColor="#0d1117"
+                        FontSize="13"
+                        FontAttributes="Bold"/>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Scroll indicator -->
+        <Label
+            x:Name="ScrollIndicator"
+            Grid.Row="2"
+            Text=""
+            TextColor="#4ecca3"
+            FontSize="12"
+            HorizontalOptions="Center"
+            IsVisible="False"
+            Margin="0,2"/>
+
+        <!-- Bottom buttons: Left click | Middle | Right click -->
+        <Grid Grid.Row="3" ColumnDefinitions="*,60,*" ColumnSpacing="4" Margin="8,0,8,8">
+
+            <Border
+                Grid.Column="0"
+                x:Name="LeftBtn"
+                BackgroundColor="#161b22"
+                StrokeShape="RoundRectangle 12"
+                Stroke="#30363d"
+                StrokeThickness="1">
+                <Label
+                    Text="LPM"
+                    TextColor="#e6edf3"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"/>
+            </Border>
+
+            <Border
+                Grid.Column="1"
+                x:Name="MiddleBtn"
+                BackgroundColor="#161b22"
+                StrokeShape="RoundRectangle 12"
+                Stroke="#30363d"
+                StrokeThickness="1">
+                <Label
+                    Text="●"
+                    TextColor="#8b949e"
+                    FontSize="16"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"/>
+            </Border>
+
+            <Border
+                Grid.Column="2"
+                x:Name="RightBtn"
+                BackgroundColor="#161b22"
+                StrokeShape="RoundRectangle 12"
+                Stroke="#30363d"
+                StrokeThickness="1">
+                <Label
+                    Text="PPM"
+                    TextColor="#e6edf3"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"/>
+            </Border>
+
+        </Grid>
+
+    </Grid>
+</ContentPage>

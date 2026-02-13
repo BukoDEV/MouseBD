@@ -1,0 +1,23 @@
+## .NET / C#
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.nupkg
+*.snupkg
+
+## MAUI / Android
+*.keystore
+*.jks
+google-services.json
+
+## Rider / JetBrains
+.idea/
+
+## VS Code
+.vscode/
+
+## OS
+.DS_Store
+Thumbs.db

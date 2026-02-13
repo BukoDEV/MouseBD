@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="MouseBD.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Ustawienia"
+    BackgroundColor="#0d1117"
+    Shell.NavBarIsVisible="True">
+
+    <Shell.TitleView>
+        <Label
+            Text="⚙ MouseBD – Ustawienia"
+            TextColor="#e6edf3"
+            FontSize="17"
+            FontAttributes="Bold"
+            VerticalOptions="Center"/>
+    </Shell.TitleView>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="20">
+
+            <!-- Server section -->
+            <Border BackgroundColor="#161b22" StrokeShape="RoundRectangle 12" Stroke="#30363d" Padding="16">
+                <VerticalStackLayout Spacing="12">
+
+                    <Label Text="SERWER" TextColor="#4ecca3" FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>
+
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Adres IP serwera" TextColor="#8b949e" FontSize="13"/>
+                        <Entry
+                            x:Name="IpEntry"
+                            Placeholder="np. 192.168.1.100"
+                            PlaceholderColor="#484f58"
+                            TextColor="#e6edf3"
+                            BackgroundColor="#0d1117"
+                            Keyboard="Url"
+                            ReturnType="Next"/>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Port" TextColor="#8b949e" FontSize="13"/>
+                        <Entry
+                            x:Name="PortEntry"
+                            Placeholder="27015"
+                            PlaceholderColor="#484f58"
+                            TextColor="#e6edf3"
+                            BackgroundColor="#0d1117"
+                            Keyboard="Numeric"
+                            ReturnType="Done"/>
+                    </VerticalStackLayout>
+
+                    <Button
+                        x:Name="ConnectBtn"
+                        Text="Połącz"
+                        BackgroundColor="#238636"
+                        TextColor="White"
+                        CornerRadius="8"
+                        Clicked="OnConnectClicked"/>
+
+                    <Label
+                        x:Name="ConnStatusLabel"
+                        Text=""
+                        TextColor="#8b949e"
+                        FontSize="13"
+                        HorizontalOptions="Center"/>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Sensitivity section -->
+            <Border BackgroundColor="#161b22" StrokeShape="RoundRectangle 12" Stroke="#30363d" Padding="16">
+                <VerticalStackLayout Spacing="14">
+
+                    <Label Text="CZUŁOŚĆ" TextColor="#4ecca3" FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Ruch kursora" TextColor="#8b949e" FontSize="13"/>
+                            <Label x:Name="SensLabel" Grid.Column="1" Text="1.8" TextColor="#e6edf3" FontSize="13"/>
+                        </Grid>
+                        <Slider
+                            x:Name="SensSlider"
+                            Minimum="0.5"
+                            Maximum="5.0"
+                            Value="1.8"
+                            MinimumTrackColor="#4ecca3"
+                            ThumbColor="#4ecca3"
+                            ValueChanged="OnSensChanged"/>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Przewijanie" TextColor="#8b949e" FontSize="13"/>
+                            <Label x:Name="ScrollSensLabel" Grid.Column="1" Text="1.0" TextColor="#e6edf3" FontSize="13"/>
+                        </Grid>
+                        <Slider
+                            x:Name="ScrollSensSlider"
+                            Minimum="0.2"
+                            Maximum="3.0"
+                            Value="1.0"
+                            MinimumTrackColor="#4ecca3"
+                            ThumbColor="#4ecca3"
+                            ValueChanged="OnScrollSensChanged"/>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Haptic section -->
+            <Border BackgroundColor="#161b22" StrokeShape="RoundRectangle 12" Stroke="#30363d" Padding="16">
+                <VerticalStackLayout Spacing="12">
+
+                    <Label Text="DOTYK" TextColor="#4ecca3" FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>
+
+                    <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                        <Label Text="Wibracja przy kliknięciu" TextColor="#8b949e" FontSize="13" VerticalOptions="Center"/>
+                        <Switch
+                            x:Name="VibrationSwitch"
+                            Grid.Column="1"
+                            IsToggled="True"
+                            OnColor="#4ecca3"/>
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Info section -->
+            <Border BackgroundColor="#161b22" StrokeShape="RoundRectangle 12" Stroke="#30363d" Padding="16">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="JAK UŻYWAĆ" TextColor="#4ecca3" FontSize="12" FontAttributes="Bold" CharacterSpacing="2"/>
+                    <Label Text="• 1 palec → ruch kursora" TextColor="#8b949e" FontSize="13"/>
+                    <Label Text="• Szybkie tapnięcie → LPM" TextColor="#8b949e" FontSize="13"/>
+                    <Label Text="• 2 palce → przewijanie" TextColor="#8b949e" FontSize="13"/>
+                    <Label Text="• Przyciski na dole → LPM / PPM" TextColor="#8b949e" FontSize="13"/>
+                    <Label Text="• Długie przytrzymanie → PPM" TextColor="#8b949e" FontSize="13"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <Button
+                Text="Zapisz i wróć"
+                BackgroundColor="#1f6feb"
+                TextColor="White"
+                CornerRadius="10"
+                HeightRequest="50"
+                Clicked="OnSaveClicked"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
