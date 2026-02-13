@@ -41,7 +41,7 @@ public partial class SettingsPage : ContentPage
         if (_service.IsConnected)
         {
             _service.Disconnect();
-            ConnectBtn.Text = "Połącz";
+            ConnectBtn.Text = "Połącz (WiFi)";
             return;
         }
 
@@ -52,8 +52,49 @@ public partial class SettingsPage : ContentPage
         bool ok = await _service.ConnectAsync(_settings);
 
         ConnectBtn.IsEnabled = true;
-        ConnectBtn.Text      = ok ? "Rozłącz" : "Połącz";
+        ConnectBtn.Text      = ok ? "Rozłącz" : "Połącz (WiFi)";
         UpdateConnStatus(ok);
+    }
+
+    private async void OnUsbClicked(object? sender, EventArgs e)
+    {
+        if (_service.IsConnected)
+        {
+            _service.Disconnect();
+            ConnectBtn.Text = "Połącz (WiFi)";
+            return;
+        }
+
+        // USB via ADB reverse: phone connects to its own loopback,
+        // which ADB forwards to the PC's port.
+        IpEntry.Text         = "127.0.0.1";
+        _settings.ServerIp   = "127.0.0.1";
+
+        if (!int.TryParse(PortEntry.Text, out int port) || port is < 1 or > 65535)
+            port = Protocol.DefaultPort;
+        _settings.ServerPort = port;
+        _settings.Save();
+
+        UsbBtn.IsEnabled     = false;
+        ConnectBtn.IsEnabled = false;
+        ConnStatusLabel.Text = "";
+        ConnectBtn.Text      = "Łączenie USB...";
+
+        bool ok = await _service.ConnectAsync(_settings);
+
+        UsbBtn.IsEnabled     = true;
+        ConnectBtn.IsEnabled = true;
+        ConnectBtn.Text      = ok ? "Rozłącz" : "Połącz (WiFi)";
+
+        if (!ok)
+        {
+            ConnStatusLabel.Text      = "USB: uruchom „Włącz tryb USB" w serwerze na PC";
+            ConnStatusLabel.TextColor = Color.FromArgb("#f85149");
+        }
+        else
+        {
+            UpdateConnStatus(true);
+        }
     }
 
     private void OnConnectionChanged(bool connected)
@@ -61,7 +102,7 @@ public partial class SettingsPage : ContentPage
         MainThread.BeginInvokeOnMainThread(() =>
         {
             UpdateConnStatus(connected);
-            ConnectBtn.Text = connected ? "Rozłącz" : "Połącz";
+            ConnectBtn.Text = connected ? "Rozłącz" : "Połącz (WiFi)";
         });
     }
 
